@@ -9,4 +9,3 @@ const db = mysql.createConnection(
     },
     console.log("Connected to employess_db database.")
 );
-

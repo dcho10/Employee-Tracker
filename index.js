@@ -1,4 +1,16 @@
 const inquirer = require("inquirer");
+const mysql = require("mysql2");
+
+const db = mysql.createConnection(
+    {
+        host: "localhost",
+        user: "root",
+        password: "",
+        datbase: "employees_db"
+    },
+    console.log("Connected to employess_db database.")
+);
+
 // ```md
 // GIVEN a command-line application that accepts user input
 // WHEN I start the application
@@ -29,17 +41,6 @@ const inquirer = require("inquirer");
 // add employee should ask for first name, last name, role, employee's manager
 
 
-function mainPrompt() {
-    return inquirer.prompt([
-        {
-            type: "list",
-            message: "What would you like to do?",
-            choices: ["View All Employees", "Add Employee", "Update Employee Role", "View All Roles", "Add Role", "View All Departments", "Add Department", "Quit"],
-            name: "management",
-        }
-    ])
-}
-
 function viewEmployees() {
     // view all employees should return a table with id, first name, last name, title, department, salary, manager
 }
@@ -66,7 +67,29 @@ function addEmployees() {
             message: "Who is their manager?",
             name: "manager",
         }
-    ])
+    ]).then(answers => {
+        const { firstName, lastName, role, manager } = answers;
+        return addToEmployeeDatabase (firstName, lastName, role, manager);
+    }).then(() => {
+        console.log("Employee added.");
+    }).catch(error => {
+        console.error("Error adding employee:", error);
+    });
+}
+
+function addToEmployeeDatabase(firstName, lastName, role, manager) {
+    return new Promise((resolve, reject) => {
+        db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`,
+        [firstName, lastName, role, manager],
+        (error, results) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(results);
+            }
+        }
+        );
+    });
 }
 
 function updateRole() {
@@ -99,7 +122,7 @@ function addRole() {
 
 function viewDepartment() {
     // view all departments should generate table with id and name
-
+    
 }
 
 function addDepartment() {
@@ -111,3 +134,54 @@ function addDepartment() {
         }
     ])
 }
+
+function mainPrompt() {
+    return inquirer.prompt([
+        {
+            type: "list",
+            message: "What would you like to do?",
+            choices: ["View All Employees", "Add Employee", "Update Employee Role", "View All Roles", "Add Role", "View All Departments", "Add Department", "Quit"],
+            name: "management",
+        }
+    ])
+}
+
+function main() {
+    let quit = false;
+    mainPrompt()
+    .then(({ management }) => {
+        switch (management) {
+                case "View Employees":
+                    return viewEmployees().then(main)
+
+                case "Add Employee":
+                    return addEmployees().then(addToEmployeeDatabase).then(main);
+
+                case "Update Employee Role":
+                    return updateRole().then(main);
+
+                case "View Roles":
+                    return viewRole().then(main);
+
+                case "Add Role":
+                    return addRole().then(main);
+
+                case "View Department":
+                    return viewDepartment().then(main);
+
+                case "Add Department":
+                    return addDepartment().then(main);
+
+                case "Exit":
+                    exit = true;
+                    console.log("Exiting...");
+                    break;
+            }
+            if (quit) 
+            return "Exiting..."
+        })
+        .catch(err => {
+            console.error("Error:", err)
+        });
+}
+main();
