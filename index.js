@@ -92,7 +92,7 @@ function addRole() {
         {
             type: "input",
             message: "What department do they belong to?",
-            name: "role-department"
+            name: "roleDepartment"
         },
     ])
 }
@@ -107,6 +107,7 @@ function addDepartment() {
         {
             type: "input",
             message: "What role would you like to add?",
+            name: "addDepartment"
         }
     ])
 }
