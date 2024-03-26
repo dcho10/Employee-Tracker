@@ -11,43 +11,16 @@ const db = mysql.createConnection(
     console.log("Connected to employes_db database.")
 );
 
-// ```md
-// GIVEN a command-line application that accepts user input
-// WHEN I start the application
-// THEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
-// WHEN I choose to view all departments
-// THEN I am presented with a formatted table showing department names and department ids
-// WHEN I choose to view all roles
-// THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
-// WHEN I choose to view all employees
-// THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
-// WHEN I choose to add a department
-// THEN I am prompted to enter the name of the department and that department is added to the database
-// WHEN I choose to add a role
-// THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
-// WHEN I choose to add an employee
-// THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
-// WHEN I choose to update an employee role
-// THEN I am prompted to select an employee to update and their new role and this information is updated in the database 
-// ```
-
-
-// NOTES:
-
-// add department should a give a prompt (i.e. "what is the name of the department")
-
-// add role should give a prompt (i.e. "what is the name of the role"), add salary should give a prompt (i.e. what is the salary), what department does role belong to (should give response of "added to database")
-
-// add employee should ask for first name, last name, role, employee's manager
-
-
 function viewEmployees() {
-    db.query('SELECT * FROM employees', (err, rows) => {
-        if (err) {
-            console.error('Error fetching employees: ' + err.stack);
-            return;
-        }
-        console.table(rows);
+    return new Promise((resolve, reject) => {
+        db.query('SELECT * FROM employees', (err, rows) => {
+            if (err) {
+                reject('Error fetching employees: ' + err.stack);
+                return;
+            }
+            console.table(rows);
+            resolve();
+        });
     });
 }
 
@@ -146,6 +119,16 @@ function updateRole() {
 }
 
 function viewRole() {
+    return new Promise((resolve, reject) => {
+        db.query('SELECT * FROM roles', (err, rows) => {
+            if (err) {
+                reject('Error fetching roles: ' + err.stack);
+                return;
+            }
+            console.table(rows);
+            resolve();
+        });
+    });
 }
 
 function addRole() {
@@ -186,7 +169,16 @@ function addRole() {
 }
 
 function viewDepartment() {
-
+    return new Promise((resolve, reject) => {
+        db.query('SELECT * FROM department', (err, rows) => {
+            if (err) {
+                reject('Error fetching departments: ' + err.stack);
+                return;
+            }
+            console.table(rows);
+            resolve();
+        });
+    });
 }
 
 function addDepartment() {
@@ -216,51 +208,54 @@ function addDepartment() {
 
 }
 
-function mainPrompt() {
-    return inquirer.prompt([
-        {
-            type: "list",
-            message: "What would you like to do?",
-            choices: ["View All Employees", "Add Employee", "Update Employee Role", "View All Roles", "Add Role", "View All Departments", "Add Department", "Quit"],
-            name: "management",
-        }
-    ])
-}
-
 function main() {
-    let quit = false;
-    mainPrompt()
-    .then(({ management }) => {
-        switch (management) {
-            case "View Employees":
-                return viewEmployees().then(main);
-
-            case "Add Employee":
-                return addEmployees().then(main);
-
-            case "Update Employee Role":
-                return updateRole()
-
-            case "View Roles":
-                return viewRole().then(main);
-
-            case "Add Role":
-                return addRole().then(main);
-
-            case "View Department":
-                return viewDepartment().then(main);
-
-            case "Add Department":
-                return addDepartment().then(main);
-
-            case "Quit":
-                console.log("Goodbye!");
-                quit = true;
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'action',
+            message: 'What would you like to do?',
+            choices: [
+                'View Employees',
+                'Add Employee',
+                'Update Employee Role',
+                'View Roles',
+                'Add Role',
+                'View Departments',
+                'Add Department',
+                'Quit'
+            ]
+        }
+    ]).then(answer => {
+        switch (answer.action) {
+            case 'View Employees':
+                viewEmployees().then(main);
                 break;
-            }
-        })
-    .catch(err => {
-        console.error("Error:", err)
+            case 'Add Employee':
+                addEmployees().then(main);
+                break;
+            case 'Update Employee Role':
+                updateRole()
+                break;
+            case 'View Roles':
+                viewRole().then(main);
+                break;
+            case 'Add Role':
+                addRole().then(main);
+                break;
+            case 'View Department':
+                viewDepartment().then(main);
+                break;
+            case 'Add Department':
+                addDepartment().then(main);
+                break;
+            case 'Quit':
+                console.log("Goodbye!");
+                db.end(); 
+                break;
+        }
+    }).catch(err => {
+        console.error("Error:", err);
+        db.end(); 
     });
 }
 main();
