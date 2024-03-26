@@ -42,7 +42,13 @@ const db = mysql.createConnection(
 
 
 function viewEmployees() {
-
+    db.query('SELECT * FROM employees', (err, rows) => {
+        if (err) {
+            console.error('Error fetching employees: ' + err.stack);
+            return;
+        }
+        console.table(rows);
+    });
 }
 
 function addEmployees() {
@@ -87,21 +93,59 @@ function addEmployees() {
     });
 }
 
-// function updateRole() {
-//     // update employee role should let you select the name of the employee and assign them a role and give resp ("updated role")
-// }
+function updateRole() {
+    db.query('SELECT * FROM employees', (err, employees) => {
+        if (err) {
+            console.error('Error fetching employees: ' + err.stack);
+            return;
+        }
+        const employeeChoices = employees.map(employee => ({
+            name: `${employee.first_name} ${employee.last_name}`,
+            value: employee.id
+        }));
 
-function viewRole() {
-    return new Promise((resolve, reject) => {
-        db.query(`SELECT * FROM roles`, function (err, results) {
+        db.query('SELECT * FROM roles', (err, roles) => {
             if (err) {
-                reject(err);
-            } else {
-                console.table(results);
-                resolve(results);
+                console.error('Error fetching roles: ' + err.stack);
+                return;
             }
+            const roleChoices = roles.map(role => ({
+                name: role.title,
+                value: role.id
+            }));
+
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    message: 'Select the employee to update:',
+                    choices: employeeChoices,
+                    name: 'employeeId',
+                },
+                {
+                    type: 'list',
+                    message: 'Select the new role for the employee:',
+                    choices: roleChoices,
+                    name: 'roleId',
+                }
+            ]).then(answers => {
+                db.query(
+                    'UPDATE employees SET role_id = ? WHERE id = ?',
+                    [answers.roleId, answers.employeeId],
+                    (err, result) => {
+                        if (err) {
+                            console.error('Error updating employee role: ' + err.stack);
+                            return;
+                        }
+                        console.log('Employee role updated successfully!');
+                        main();
+                    }
+                );
+            });
         });
     });
+}
+
+function viewRole() {
 }
 
 function addRole() {
@@ -142,16 +186,7 @@ function addRole() {
 }
 
 function viewDepartment() {
-    return new Promise((resolve, reject) => {
-        db.query(`SELECT * FROM department`, function (err, results) {
-            if (err) {
-                reject(err);
-            } else {
-                console.table(results);
-                resolve(results);
-            }
-        });
-    });
+
 }
 
 function addDepartment() {
@@ -164,7 +199,7 @@ function addDepartment() {
     ]).then(answers => {
         const { addDepartment } = answers;
         return new Promise((resolve, reject) => {
-            db.query(`INSERT INTO department (department_name) VALUES ?`,
+            db.query(`INSERT INTO department (department_name) VALUES (?)`,
             [addDepartment],
             (error, result) => {
                 if (error) {
@@ -203,8 +238,8 @@ function main() {
             case "Add Employee":
                 return addEmployees().then(main);
 
-            // case "Update Employee Role":
-            //     return updateRole().then(main);
+            case "Update Employee Role":
+                return updateRole()
 
             case "View Roles":
                 return viewRole().then(main);
@@ -219,16 +254,11 @@ function main() {
                 return addDepartment().then(main);
 
             case "Quit":
-                console.log("Exiting...");
+                console.log("Goodbye!");
                 quit = true;
                 break;
             }
         })
-    .then(() => {
-        if (quit) {
-            return main();
-        }
-    })
     .catch(err => {
         console.error("Error:", err)
     });
