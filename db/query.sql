@@ -55,3 +55,9 @@ SELECT * FROM employees WHERE manager_id IS NULL;
 -- |  5 | Kunal      | Singh     |       5 |       NULL |
 -- |  7 | Sarah      | Lourd     |       7 |       NULL |
 -- +----+------------+-----------+---------+------------+
+
+SELECT d.department_name, SUM(r.salary) AS total_utilized_budget
+FROM employees e
+JOIN roles r ON e.role_id = r.id
+JOIN department d ON r.department_id = d.id
+GROUP BY d.id, d.department_name;

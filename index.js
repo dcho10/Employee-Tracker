@@ -125,7 +125,7 @@ function deleteEmployee() {
             name: `${employee.first_name} ${employee.last_name}`,
             value: employee.id
         }));
-        // Start inquirer prompt
+        // Start inquirer
         return inquirer.prompt([
             {
                 type: "list",
@@ -323,7 +323,19 @@ function addDepartment() {
     .catch(error => {
     console.error("Error adding department:", error);
     });
+}
 
+function viewSalaries() {
+    return new Promise((resolve, reject) => {
+        db.query('SELECT d.department_name, SUM(r.salary) AS total_utilized_budget FROM employees e JOIN roles r ON e.role_id = r.id JOIN department d ON r.department_id = d.id GROUP BY d.id, d.department_name;', (err, rows) => {
+            if (err) {
+                reject('Error fetching total salaries: ' + err.stack);
+                return;
+            }
+            console.table(rows);
+            resolve();
+        });
+    });
 }
 
 // MAIN FUNCTIONALITY ==============================================================================================================================================================
@@ -345,6 +357,7 @@ function main() {
                 'Add Role',
                 'View Departments',
                 'Add Department',
+                'View Salaries',
                 'Quit'
             ]
         }
@@ -377,6 +390,9 @@ function main() {
                 break;
             case 'Add Department':
                 addDepartment().then(main);
+                break;
+            case 'View Salaries':
+                viewSalaries().then(main);
                 break;
             case 'Quit':
                 console.log("Goodbye!");
