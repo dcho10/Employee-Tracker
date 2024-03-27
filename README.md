@@ -35,7 +35,9 @@ Some challenges I experienced include: Generating the tables in the terminal
     
 ## Installation
 
-  Inquirer@8.2.4, mysql2
+  Inquirer@8.2.4
+  
+  Mysql2
 
 ## Images
 
@@ -51,6 +53,7 @@ Some challenges I experienced include: Generating the tables in the terminal
 ## Credits
 
   Return new Promise: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+  
   MySQL Alias: https://www.w3schools.com/mysql/mysql_alias.asp
 
 ## License
