@@ -100,6 +100,58 @@ function addEmployees() {
     });
 };
 
+function viewManagers() {
+    return new Promise((resolve, reject) => {
+        // Used SELECT * FROM to see all the managers employees table, manager_id should be null because they are managers
+        db.query('SELECT * FROM employees WHERE manager_id IS NULL', (err, rows) => {
+            if (err) {
+                reject('Error fetching managers: ' + err.stack);
+                return;
+            }
+            console.table(rows);
+            resolve();
+        });
+    });
+}
+
+function deleteEmployee() {
+    db.query('SELECT * FROM employees', (err, employees) => {
+        if (err) {
+            console.error('Error fetching employees: ' + err.stack);
+            return;
+        }
+        // Create array of employee choices
+        const employeeChoices = employees.map(employee => ({
+            name: `${employee.first_name} ${employee.last_name}`,
+            value: employee.id
+        }));
+        // Start inquirer prompt
+        return inquirer.prompt([
+            {
+                type: "list",
+                message: "Select the employee you want to delete",
+                choices: employeeChoices,
+                name: "delete"
+            }
+        ]).then(answers => {
+            db.query(
+                // Used DELETE FROM to delete the exact employee wants to delete
+                'DELETE FROM employees WHERE id = ?',
+                [answers.delete],
+                (err, result) => {
+                    if (err) {
+                        console.error('Error deleting employee: ' + err.stack);
+                        return;
+                    }
+                    console.log('Employee deleted.');
+                    main();
+                }
+            );
+        }).catch(error => { // Catch function if any issues occur
+            console.error("Error deleting employee:", error);
+        });
+    });
+}
 
 // ROLE FUNCTIONALITY ==============================================================================================================================================================
 
@@ -286,6 +338,8 @@ function main() {
             choices: [
                 'View Employees',
                 'Add Employee',
+                'Remove Employee',
+                'View Managers',
                 'Update Employee Role',
                 'View Roles',
                 'Add Role',
@@ -302,6 +356,12 @@ function main() {
                 break;
             case 'Add Employee':
                 addEmployees()
+                break;
+            case 'Remove Employee':
+                deleteEmployee()
+                break;
+            case 'View Managers':
+                viewManagers().then(main);
                 break;
             case 'Update Employee Role':
                 updateRole()
