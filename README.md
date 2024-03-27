@@ -1,6 +1,6 @@
 Link to video:
 
-https://drive.google.com/file/d/1KU9VCKbJENiRBW7RV1cV__yIdFZoAf3i/view
+https://drive.google.com/file/d/1EC4y9Qst-pheti7JKdIfUETzfPgnZ0kd/view
 
 # Employee-Tracker
 
@@ -43,6 +43,7 @@ Some challenges I experienced include: Generating the tables in the terminal
 
   ![image](https://github.com/dcho10/Employee-Tracker/assets/153252185/df5c686d-b578-4255-9265-36672e1a1fab)
 
+  ![image](https://github.com/dcho10/Employee-Tracker/assets/153252185/5b52ad0f-780a-4fd2-813e-2d96bdb58bcc)
 
 ## Usage
 
