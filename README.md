@@ -1,3 +1,7 @@
+Link to video:
+
+https://drive.google.com/file/d/1KU9VCKbJENiRBW7RV1cV__yIdFZoAf3i/view
+
 # Employee-Tracker
 
 https://github.com/dcho10/Employee-Tracker
@@ -18,6 +22,8 @@ Some challenges I experienced include: Generating the tables in the terminal
 ## Table of Contents
 
   [Installation](#installation)
+
+  [Images](#images)
   
   [Usage](#usage)
 
@@ -30,6 +36,11 @@ Some challenges I experienced include: Generating the tables in the terminal
 ## Installation
 
   Inquirer@8.2.4, mysql2
+
+## Images
+
+  ![image](https://github.com/dcho10/Employee-Tracker/assets/153252185/df5c686d-b578-4255-9265-36672e1a1fab)
+
 
 ## Usage
 
