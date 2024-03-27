@@ -327,6 +327,7 @@ function addDepartment() {
 
 function viewSalaries() {
     return new Promise((resolve, reject) => {
+        // Used d., r., and e., found from https://www.w3schools.com/mysql/mysql_alias.asp
         db.query('SELECT d.department_name, SUM(r.salary) AS total_utilized_budget FROM employees e JOIN roles r ON e.role_id = r.id JOIN department d ON r.department_id = d.id GROUP BY d.id, d.department_name;', (err, rows) => {
             if (err) {
                 reject('Error fetching total salaries: ' + err.stack);

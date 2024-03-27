@@ -51,6 +51,7 @@ Some challenges I experienced include: Generating the tables in the terminal
 ## Credits
 
   Return new Promise: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+  MySQL Alias: https://www.w3schools.com/mysql/mysql_alias.asp
 
 ## License
 
