@@ -1,4 +1,4 @@
-# Professional-README-Generator
+# Employee-Tracker
 
 https://github.com/dcho10/Employee-Tracker
 
