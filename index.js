@@ -320,12 +320,10 @@ function main() {
                 break;
             case 'Quit':
                 console.log("Goodbye!");
-                db.end(); 
                 break;
         }
     }).catch(err => {
         console.error("Error:", err);
-        db.end(); 
     });
 }
 main();
