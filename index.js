@@ -64,13 +64,13 @@ function addEmployees() {
             },
             {
                 type: "list",
-                message: "What is their role ID?",
+                message: "What is their role?",
                 choices: roleChoices,
                 name: "role",
             },
             {
                 type: "list",
-                message: "What is their manager's ID?",
+                message: "Who is their manager",
                 choices: managerChoices,
                 name: "manager",
             }
@@ -319,7 +319,7 @@ function addDepartment() {
                 }
             });
         });
-    }).then(main)
+    })
     .catch(error => {
     console.error("Error adding department:", error);
     });
